@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flipbook</title>
+    <script src="page-flip.browser.js"></script>
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #e8e8e8;
+        }
+
+        #book {
+            width: 400px;
+            height: 600px;
+        }
+
+        /* On mobile, show single page width */
+        @media (max-width: 600px) {
+            #book {
+                width: 100vw;
+                height: calc(100vw * 1.5);
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div id="book"></div>
+
+<script>
+    const isMobile = window.innerWidth <= 600;
+
+    const pageFlip = new St.PageFlip(
+        document.getElementById("book"),
+        {
+            width: isMobile ? window.innerWidth : 400,
+            height: isMobile ? window.innerWidth * 1.5 : 600,
+
+            size: "fixed",
+            showCover: true,
+            usePortrait: true,          // ✅ Single page on mobile
+            startPage: 0,
+            drawShadow: true,
+            flippingTime: 600,
+
+            mobileScrollSupport: true, // ✅ Prevents scroll conflict on mobile
+            swipeDistance: 20,
+            clickEventForward: true,
+
+            // ✅ This removes the blank left page on the cover
+            startZIndex: 0,
+            autoSize: false,
+        }
+    );
+
+    pageFlip.loadFromImages([
+        "pages/Page1.jpg",
+        "pages/Page2.jpg",
+        "pages/Page3.jpg",
+        "pages/Page4.jpg",
+        "pages/Page5.jpg",
+        "pages/Page6.jpg",
+        "pages/Page7.jpg",
+        "pages/Page8.jpg",
+        "pages/Page9.jpg",
+        "pages/Page10.jpg",
+        "pages/Page11.jpg",
+        "pages/Page12.jpg",
+        "pages/Page13.jpg"
+    ]);
+</script>
+</body>
+</html>
