@@ -12,51 +12,66 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             background: #e8e8e8;
+            overflow: hidden;
+        }
+
+        #book-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         #book {
-            width: 400px;
-            height: 600px;
-        }
-
-        /* On mobile, show single page width */
-        @media (max-width: 600px) {
-            #book {
-                width: 100vw;
-                height: calc(100vw * 1.5);
-            }
+            /* Let PageFlip control the size — don't force CSS size */
+            touch-action: none;
         }
     </style>
 </head>
 
 <body>
-<div id="book"></div>
+<div id="book-container">
+    <div id="book"></div>
+</div>
 
 <script>
-    const isMobile = window.innerWidth <= 600;
+    function getBookSize() {
+        const screenW = window.innerWidth;
+        const screenH = window.innerHeight;
+        const isMobile = screenW <= 600;
+
+        if (isMobile) {
+            // Full width on mobile, single page
+            const w = screenW;
+            const h = w * 1.414; // A4 ratio
+            return { width: Math.floor(w), height: Math.floor(h), mobile: true };
+        } else {
+            // Desktop: fit within screen with padding
+            const maxH = screenH * 0.88;
+            const h = Math.min(maxH, 700);
+            const w = h / 1.414;
+            return { width: Math.floor(w), height: Math.floor(h), mobile: false };
+        }
+    }
+
+    const size = getBookSize();
 
     const pageFlip = new St.PageFlip(
         document.getElementById("book"),
         {
-            width: isMobile ? window.innerWidth : 400,
-            height: isMobile ? window.innerWidth * 1.5 : 600,
+            width: size.width,
+            height: size.height,
 
             size: "fixed",
-            showCover: true,
-            usePortrait: true,          // ✅ Single page on mobile
-            startPage: 0,
+            showCover: false,       // ✅ No blank white page
+            usePortrait: true,      // ✅ Single page on mobile
             drawShadow: true,
             flippingTime: 600,
-
-            mobileScrollSupport: true, // ✅ Prevents scroll conflict on mobile
+            mobileScrollSupport: false,
             swipeDistance: 20,
             clickEventForward: true,
-
-            // ✅ This removes the blank left page on the cover
-            startZIndex: 0,
-            autoSize: false,
+            autoSize: true,         // ✅ Key fix: lets PageFlip scale its canvas properly
         }
     );
 
